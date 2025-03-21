@@ -1,6 +1,5 @@
 package com.manilvit.bookmanagmentsystem.controller;
 
-
 import com.manilvit.bookmanagmentsystem.dto.BookDTO;
 import com.manilvit.bookmanagmentsystem.dto.BookMapper;
 import com.manilvit.bookmanagmentsystem.model.Book;
@@ -16,6 +15,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for managing books.
+ * Provides endpoints for retrieving, creating, updating, and deleting books.
+ */
 @Controller
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
@@ -24,8 +27,12 @@ public class BookController {
     private final BookService bookService;
     private final BookMapper bookMapper;
 
+    /**
+     * Retrieves all books.
+     * Accessible only to authenticated users.
+     */
     @GetMapping
-    @PreAuthorize("isAuthenticated()")  // Только аутентифицированные пользователи могут просматривать книги
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<BookDTO>> getAllBooks() {
         List<Book> books = bookService.getAllBooks();
         List<BookDTO> bookDTOs = books.stream()
@@ -34,8 +41,12 @@ public class BookController {
         return new ResponseEntity<>(bookDTOs, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves a book by its ID.
+     * Accessible only to authenticated users.
+     */
     @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")  // Только аутентифицированные пользователи могут просматривать книги
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
         Optional<Book> book = bookService.getBookById(id);
 
@@ -43,6 +54,10 @@ public class BookController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Creates a new book.
+     * Accessible only to users with the ADMIN role.
+     */
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO) {
@@ -52,6 +67,10 @@ public class BookController {
         return new ResponseEntity<>(createdBookDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Updates an existing book by its ID.
+     * Accessible only to users with the ADMIN role.
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
@@ -62,6 +81,10 @@ public class BookController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Deletes a book by its ID.
+     * Accessible only to users with the ADMIN role.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
@@ -73,5 +96,4 @@ public class BookController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
 }

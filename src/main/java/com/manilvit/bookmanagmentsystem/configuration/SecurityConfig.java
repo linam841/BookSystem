@@ -15,17 +15,25 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
+/**
+ * Security configuration class for defining authentication and authorization rules.
+ */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity  // Используется вместо @EnableGlobalMethodSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
+    /**
+     * Creates a BCrypt password encoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Используем BCrypt для хэширования паролей
+        return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures security settings and authorization rules.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -37,6 +45,9 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Returns a list of publicly accessible API endpoints.
+     */
     private String[] getOpenedResources() {
         return new String[]{
                 "/api/books/",
@@ -46,17 +57,13 @@ public class SecurityConfig {
         };
     }
 
-
-
-
+    /**
+     * Configures authentication with a DAO authentication provider.
+     */
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
         return new ProviderManager(daoAuthenticationProvider);
     }
-
-
-
-
 }
